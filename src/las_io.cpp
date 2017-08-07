@@ -217,6 +217,7 @@ bool PointArray::loadLas(QString fileName, size_t maxPointCount,
     fields.push_back(GeomField(TypeSpec::uint8_i(), "numberOfReturns", npoints));
     fields.push_back(GeomField(TypeSpec::uint8_i(), "pointSourceId", npoints));
     fields.push_back(GeomField(TypeSpec::uint8_i(), "classification", npoints));
+    fields.push_back(GeomField(TypeSpec::float32(), "heightAboveGround", npoints));
     if (totalPoints == 0)
     {
         g_logger.warning("File %s has zero points", fileName);
@@ -229,6 +230,7 @@ bool PointArray::loadLas(QString fileName, size_t maxPointCount,
     uint8_t* numReturns     = fields[3].as<uint8_t>();
     uint8_t* pointSourceId  = fields[4].as<uint8_t>();
     uint8_t* classification = fields[5].as<uint8_t>();
+	float* heightAboveGround = fields[6].as<float>();
     uint64_t readCount = 0;
     uint64_t nextDecimateBlock = 1;
     uint64_t nextStore = 1;
@@ -267,6 +269,7 @@ bool PointArray::loadLas(QString fileName, size_t maxPointCount,
         // Put flags back in classification byte to avoid memory bloat
         *classification++ = point.classification | (point.synthetic_flag << 5) |
                             (point.keypoint_flag << 6) | (point.withheld_flag << 7);
+		*heightAboveGround++ = point.get_z() - lasReader->header.min_z;
         // Extract point RGB
         if (color)
         {
