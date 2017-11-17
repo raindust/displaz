@@ -1045,6 +1045,8 @@ DrawCount View3D::drawPoints(const TransformState& transState,
         if(geom.pointCount() == 0)
             continue;
         V3f relCursor = m_cursorPos - geom.offset();
+        prog.setUniformValue("minHeight", GLfloat(geom.boundingBox().min.z));
+        prog.setUniformValue("maxHeight", GLfloat(geom.boundingBox().max.z));
         prog.setUniformValue("cursorPos", relCursor.x, relCursor.y, relCursor.z);
         prog.setUniformValue("fileNumber", (GLint)(selection[(int)i].row() + 1));
         prog.setUniformValue("pointPixelScale", (GLfloat)(0.5*width()*dPR*m_camera.projectionMatrix()[0][0]));

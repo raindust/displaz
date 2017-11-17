@@ -13,16 +13,17 @@ uniform float pointRadius = 0.1;   //# uiname=Point Radius; min=0.001; max=10
 uniform float trimRadius = 1000000;//# uiname=Trim Radius; min=1; max=1000000
 uniform float exposure = 1.0;      //# uiname=Exposure; min=0.01; max=10000
 uniform float contrast = 1.0;      //# uiname=Contrast; min=0.01; max=10000
-uniform float heightRange = 1;   //# uiname=Height Range; min=0.001; max=1000000
 uniform int colorMode = 0;         //# uiname=Colour Mode; enum=Intensity|Colour|Return Index|Point Source|Las Classification|File Number|Height
 uniform int selectionMode = 0;     //# uiname=Selection; enum=All|Classified|First Return|Last Return|First Of Several
 uniform float minPointSize = 0;
-uniform float maxPointSize = 400.0;
+uniform float maxPointSize = 400.0; 
 // Point size multiplier to get from a width in projected coordinates to the
 // number of pixels across as required for gl_PointSize
 uniform float pointPixelScale = 0;
 uniform vec3 cursorPos = vec3(0);
 uniform int fileNumber = 0;
+uniform float minHeight = 0;
+uniform float maxHeight = 10;
 in float intensity;
 in vec3 position;
 in vec3 color;
@@ -30,7 +31,6 @@ in int returnNumber;
 in int numberOfReturns;
 in int pointSourceId;
 in int classification;
-in float heightAboveGround;
 
 flat out float modifiedPointRadius;
 flat out float pointScreenSize;
@@ -110,7 +110,7 @@ void main()
     else if (colorMode == 6)
     {
         // Color based on height above ground
-        pointColor = height_colormap(heightAboveGround, heightRange);
+        pointColor = height_colormap(position.z - minHeight, maxHeight - minHeight);
     }
     if (selectionMode != 0)
     {
